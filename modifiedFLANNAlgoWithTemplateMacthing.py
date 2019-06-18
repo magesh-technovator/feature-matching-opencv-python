@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Jun 17 18:36:34 2019
+Created on Tue Jun 18 14:26:30 2019
 
 @author: MAGESHWARAN
 """
+
 import os
 import json
 import cv2
 import numpy as np
 from tqdm import tqdm
+matchingTemplateApproach = 0
+
 
 base_dir = os.getcwd()
 data_folder = os.path.join(base_dir, "Dataset")
@@ -22,7 +25,7 @@ sample_images = os.path.join(sample_testset, "images")
 sample_crops = os.path.join(sample_testset, "crops")
 
 def ModifiedFLANN(img1, img2):
-
+    global matchingTemplateApproach
     mini_match_count = 10
     FLANN_INDEX_KDTREE = 1
     index_params = dict(algorithm=FLANN_INDEX_KDTREE, trees=5)
@@ -38,6 +41,19 @@ def ModifiedFLANN(img1, img2):
 
     if (des1 is None) or (des2 is None):
         flannMatch = False
+        matchingTemplateApproach += 1
+
+        if (img2.shape[0] > img1.shape[0]) and (img2[1].shape[1] > img1.shape[1]):
+            res = cv2.matchTemplate(img2, img1, cv2.TM_CCOEFF)
+            min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+
+            h, w, _ = img1.shape
+
+            pts = [int(min_loc[0]), int(min_loc[0]) + w,
+                   int(max_loc[0]), int(max_loc[1])]
+
+            return flannMatch, pts
+
         return flannMatch, orgBorder
 
     flann = cv2.FlannBasedMatcher(index_params, search_params)
@@ -76,7 +92,7 @@ def ModifiedFLANN(img1, img2):
 
 def findMinMax(border):
 
-    x, y = abs(np.transpose(border)[0]), abs(np.transpose(border)[1])
+    x, y = np.transpose(border)[0], np.transpose(border)[1]
 
     x1, x2 = int(x.min()), int(x.max())
 
@@ -106,6 +122,12 @@ for imagefile in tqdm(os.listdir(sample_images)):
                 if cropfile in noAssociationCropImages:
                     noAssociationCropImages.remove(cropfile)
 
+        else:
+            if crop_border is not None:
+                imageTracker.append((cropfile.replace(".jpg", ""), crop_border))
+                if cropfile in noAssociationCropImages:
+                    noAssociationCropImages.remove(cropfile)
+
     completeTracker[imagefile.replace(".jpg", "")] = imageTracker
 
 
@@ -117,7 +139,7 @@ for crop in noAssociationCropImages:
 completeTracker["NA"] = NA_Crops
 
 with open(model_sample_result, "w") as f:
-    json.dump(completeTracker, f, sort_keys=True, indent = 4)
+    json.dump(completeTracker, f)
 
 
 print("Output Json File is generated")
