@@ -40,39 +40,41 @@ def getSampleTestset(sample_testset):
     f = open(filename, "wb")
     f.write(request.urlopen(sample_testset[0]).read())
     f.close()
-    
+
     if filename.endswith("tar.gz"):
         tar = tarfile.open(filename, "r:gz")
         tar.extractall(data_folder)
         tar.close()
 
-# ------------------------ Create directories ---------------------------------
-base_dir = os.getcwd()
+if __name__ == "__main__":
 
-data_folder = createFolders(base_dir, "Dataset")
+    # -------------------------- Create directories ---------------------------
+    base_dir = os.getcwd()
 
-images_folder = createFolders(data_folder, "Images")
+    data_folder = createFolders(base_dir, "Dataset")
 
-crops_folder = createFolders(data_folder, "Crops")
+    images_folder = createFolders(data_folder, "Images")
 
-# -------------------------- Download files -----------------------------------
+    crops_folder = createFolders(data_folder, "Crops")
 
-files_url = ["https://s3.amazonaws.com/msd-cvteam/interview_tasks/crops_images_association_2/images.txt",
-             "https://s3.amazonaws.com/msd-cvteam/interview_tasks/crops_images_association_2/crops.txt"]
+    # -------------------------- Download files -------------------------------
 
-
-# getFiles(files_url[0])
-# getFiles(files_url[1])
-
-# --------------------------- Download Dataset --------------------------------
-image_url = getUrls("images.txt")
-    
-crop_url = getUrls("crops.txt")
+    files_url = ["https://s3.amazonaws.com/msd-cvteam/interview_tasks/crops_images_association_2/images.txt",
+                 "https://s3.amazonaws.com/msd-cvteam/interview_tasks/crops_images_association_2/crops.txt"]
 
 
-# downloadImages(image_url, images_folder)
-# downloadImages(crop_url, crops_folder)
+    getFiles(files_url[0])
+    getFiles(files_url[1])
 
-# ------------------------ Download Sample dataset ----------------------------
-sample_testset = ["https://bit.ly/2VoBYo1", "sample_testset.tar.gz"]
-# getSampleTestset(sample_testset)
+    # --------------------------- Download Dataset ----------------------------
+    image_url = getUrls("images.txt")
+
+    crop_url = getUrls("crops.txt")
+
+
+    downloadImages(image_url, images_folder)
+    downloadImages(crop_url, crops_folder)
+
+    # ------------------------ Download Sample dataset ------------------------
+    sample_testset = ["https://bit.ly/2VoBYo1", "sample_testset.tar.gz"]
+    getSampleTestset(sample_testset)

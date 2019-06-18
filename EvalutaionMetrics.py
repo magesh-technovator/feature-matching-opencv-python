@@ -7,75 +7,87 @@ Created on Tue Jun 18 11:03:42 2019
 import os
 import json
 import numpy as np
+import configparser
 
 
-base_dir = os.getcwd()
-data_folder = os.path.join(base_dir, "Dataset")
-sample_testset = os.path.join(data_folder, "sample_testset")
+def evaluateModel(gt_result, model_result):
+    gt_images = list(gt_result.keys())
 
-model_sample_result = os.path.join(sample_testset, "sample_result.json")
-gt_sample_result = os.path.join(sample_testset, "out_res.json")
+    tp = tn = fp = fn = 0
 
-with open(model_sample_result, "r") as f:
-    model_result = json.load(f)
+    for img in gt_images:
 
-with open(gt_sample_result, "r") as f:
-    gt_result = json.load(f)
+        gt_association = gt_result[img]
+        model_association = model_result[img]
+        gt_list = []
+        model_list = []
 
-gt_images = list(gt_result.keys())
-model_images = list(model_result.keys())
+        if len(gt_association) > 0:
+            for i in range(len(gt_association)):
+                gt_list.append(gt_association[i][0])
 
-tp = tn = fp = fn = 0
+            for j in range(len(model_association)):
+                model_list.append(model_association[j][0])
 
-for img in gt_images:
+            gt_copy = gt_list.copy()
+            model_copy = model_list.copy()
 
-    gt_association = gt_result[img]
-    model_association = model_result[img]
-    gt_list = []
-    model_list = []
+            for association in gt_list:
+                if association in model_list:
+                    if img != "NA":
+                        tp += 1
+                    else:
+                        tn += 1
+                    gt_copy.remove(association)
+                    model_copy.remove(association)
 
-    if len(gt_association) > 0:
-        for i in range(len(gt_association)):
-            gt_list.append(gt_association[i][0])
-
-        for j in range(len(model_association)):
-            model_list.append(model_association[j][0])
-
-        gt_copy = gt_list.copy()
-        model_copy = model_list.copy()
-
-        for association in gt_list:
-            if association in model_list:
-                if img != "NA":
-                    tp += 1
                 else:
-                    tn += 1
-                gt_copy.remove(association)
-                model_copy.remove(association)
+                    fn += 1
 
-            else:
-                fn += 1
+            for found in model_copy:
+                if found not in gt_copy:
+                    fp += 1
 
-        for found in model_copy:
-            if found not in gt_copy:
-                fp += 1
+        elif len(model_association) == 0:
+            tn += 1
 
-    elif len(model_association) == 0:
-        tn += 1
+        elif len(model_association) > 0:
+            fp += len(model_association)
 
-    elif len(model_association) > 0:
-        fp += len(model_association)
+    precision = tp / (tp + fp)
 
-precision = tp / (tp + fp)
+    recall = tp / (tp + fn)
 
-recall = tp / (tp + fn)
+    f1_score = 2* ((precision * recall) / (precision + recall))
 
-f1_score = 2* ((precision * recall) / (precision + recall))
+    print("Precision: ", precision)
+    print("recall: ", recall)
+    print("F1 Score:", f1_score)
 
-print("Precision: ", precision)
-print("recall: ", recall)
-print("F1 Score:", f1_score)
+    confusion_matrix = np.array(([tp, fp], [fn, tn]))
 
-confusion_matrix = np.array(([tp, fp], [fn, tn]))
+    print("Confusion Matrix:", confusion_matrix)
 
-print("Confusion Matrix:", confusion_matrix)
+if __name__ == "__main__":
+
+    base_dir = os.getcwd()
+
+    # reading config file
+    config = configparser.ConfigParser()
+    config.read("evaluationConfig.inf")
+
+    section = config.sections()
+
+    # storing section names into a list
+    filepath = config.options(section[0])
+
+    gtResult = config.get(section[0], filepath[0])
+    modelResult = config.get(section[0], filepath[1])
+
+    with open(modelResult, "r") as f:
+        model_result = json.load(f)
+
+    with open(gtResult, "r") as f:
+        gt_result = json.load(f)
+
+    evaluateModel(gt_result, model_result)

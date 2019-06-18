@@ -1,0 +1,4 @@
+[filepath]
+# Specify the path of ground truth and model output json files
+gtResult = D:\learning\AI\MadStreetDen\Dataset\sample_testset\out_res.json
+ModeResult = D:\learning\AI\MadStreetDen\Dataset\sample_testset\sample_result.json
