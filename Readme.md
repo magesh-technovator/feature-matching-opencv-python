@@ -1,4 +1,4 @@
-# Solutions to interview problems of MadStreetDen
+# Solutions to MadStreetDen interview problem
 
 ## Codebase Structure and Exectution:
 1. **modelConfig.inf** facilitates **imagesCropAssociation.py**:
@@ -97,5 +97,5 @@ After Iterating over the sample testset with above methods, I found the last one
 3. Homography fails to compute Transformation with image like(fc429b5f-429b-5b5a-8e10-93835f02db9d.jpg) reason might be Low Resolution or Radom salt and pepper noises in crop image.
 
 ## References:
-[1]. [A Comparative Analysis of SIFT, SURF, KAZE, AKAZE, ORB, and BRISK](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=8346440)
+[1]. [A Comparative Analysis of SIFT, SURF, KAZE, AKAZE, ORB, and BRISK](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=8346440) <br />
 [2]. [Feature Maching with Bounding Distortion Algorithm](http://www.weizmann.ac.il/math/ronen/sites/math.ronen/files/uploads/lipman_et_al_-_feature_matching_with_bounded_distortion.pdf)
