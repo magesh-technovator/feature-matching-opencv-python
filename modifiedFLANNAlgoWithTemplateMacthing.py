@@ -78,7 +78,7 @@ def ModifiedFLANN(img1, img2, useTemplateMacthing=True):
 
 def findMinMax(border):
 
-    x, y = np.transpose(border)[0], np.transpose(border)[1]
+    x, y = np.absolute(np.transpose(border)[0]), np.absolute(np.transpose(border)[1])
 
     x1, x2 = int(x.min()), int(x.max())
 

@@ -1,0 +1,13 @@
+FLANN with Template Matching
+Precision:  0.5602836879432624
+recall:  0.5984848484848485
+F1 Score: 0.5787545787545788
+Confusion Matrix: [[79 62]
+ [53  0]]
+
+FLANN Without Template Macthing
+Precision:  0.4090909090909091
+recall:  0.5955882352941176
+F1 Score: 0.4850299401197605
+Confusion Matrix: [[ 81 117]
+ [ 55   1]]
