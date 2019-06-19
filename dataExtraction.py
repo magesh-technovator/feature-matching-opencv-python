@@ -17,13 +17,13 @@ def createFolders(base_folder, folder_name):
     folder = os.path.join(base_folder, folder_name)
     return folder
 
-def getFiles(url):
+def getFiles(url, data_folder):
     filename = url.split("/")[-1].strip()
     f = open(os.path.join(data_folder, filename),'wb')
     f.write(request.urlopen(url).read())
     f.close()
 
-def getUrls(txt_file):
+def getUrls(txt_file, data_folder):
     with open(os.path.join(data_folder, txt_file)) as imagefiles:
         urls = imagefiles.readlines()
     return urls
@@ -35,7 +35,7 @@ def downloadImages(url_list, folder):
         f.write(request.urlopen(image).read())
         f.close()
 
-def getSampleTestset(sample_testset):
+def getSampleTestset(sample_testset, data_folder):
     filename = os.path.join(data_folder, sample_testset[1])
     f = open(filename, "wb")
     f.write(request.urlopen(sample_testset[0]).read())

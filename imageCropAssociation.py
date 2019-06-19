@@ -6,6 +6,7 @@ Created on Tue Jun 18 18:53:37 2019
 """
 
 import os
+import sys
 import configparser
 import json
 import cv2
@@ -46,17 +47,18 @@ if __name__ == "__main__":
 
         # -------------------------- Download files ---------------------------
         print("Downloading images.txt and crops.txt")
+
         files_url = ["https://s3.amazonaws.com/msd-cvteam/interview_tasks/crops_images_association_2/images.txt",
                      "https://s3.amazonaws.com/msd-cvteam/interview_tasks/crops_images_association_2/crops.txt"]
 
 
-        getFiles(files_url[0])
-        getFiles(files_url[1])
+        getFiles(files_url[0], data_folder)
+        getFiles(files_url[1], data_folder)
 
         # --------------------------- Download Dataset ------------------------
-        image_url = getUrls("images.txt")
+        image_url = getUrls("images.txt", data_folder)
 
-        crop_url = getUrls("crops.txt")
+        crop_url = getUrls("crops.txt", data_folder)
 
         print("Downloading Real Dataset and Test Dataset!!!")
         print("Please Wait this may take few mins depending on your internet connection")
@@ -66,7 +68,7 @@ if __name__ == "__main__":
 
         # ------------------------ Download Sample dataset --------------------
         sample_testset = ["https://bit.ly/2VoBYo1", "sample_testset.tar.gz"]
-        getSampleTestset(sample_testset)
+        getSampleTestset(sample_testset, data_folder)
 
     else:
         images_folder = config.get(section[1], filepath[0])
@@ -77,6 +79,10 @@ if __name__ == "__main__":
 
     # --------------------- FLANN Based Feature Detection ---------------------
     completeTracker = {}
+
+    if not (os.path.isdir(images_folder) and os.path.isdir(crops_folder)):
+        print("Please enter valid folder path in Config File")
+        sys.exit()
 
     noAssociationCropImages = os.listdir(crops_folder)
     noAssociationImages = os.listdir(images_folder)
@@ -119,7 +125,7 @@ if __name__ == "__main__":
     modelResult = os.path.join(base_dir, modelResult)
 
     with open(modelResult, "w") as f:
-        json.dump(completeTracker, f)
+        json.dump(completeTracker, f, indent=4, sort_keys=True)
 
 
     print("Output Json File is generated")
