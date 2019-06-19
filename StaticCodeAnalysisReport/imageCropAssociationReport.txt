@@ -1,0 +1,7 @@
+************* Module imageCropAssociation
+C: 50, 0: Line too long (113/100) (line-too-long)
+C: 51, 0: Line too long (112/100) (line-too-long)
+
+------------------------------------------------------------------
+Your code has been rated at 9.71/10 (previous run: 9.71/10, +0.00)
+

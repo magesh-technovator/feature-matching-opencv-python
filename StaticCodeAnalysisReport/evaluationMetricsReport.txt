@@ -1,0 +1,9 @@
+************* Module EvalutaionMetrics
+R: 13, 0: Too many local variables (22/15) (too-many-locals)
+C: 39,12: Consider using enumerate instead of iterating with range and len (consider-using-enumerate)
+C: 42,12: Consider using enumerate instead of iterating with range and len (consider-using-enumerate)
+R: 13, 0: Too many branches (13/12) (too-many-branches)
+
+------------------------------------------------------------------
+Your code has been rated at 9.26/10 (previous run: 9.27/10, -0.01)
+

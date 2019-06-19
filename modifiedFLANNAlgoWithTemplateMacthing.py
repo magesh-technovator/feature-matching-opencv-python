@@ -12,26 +12,48 @@ import numpy as np
 from tqdm import tqdm
 
 def ModifiedFLANN(img1, img2, useTemplateMacthing=True):
+    """
+        Runs FLANN Algoritm with SIFT Descriptor to find association b/w images
+
+    Input:
+        img1 : Crop Image (numpy array)
+
+        img2 : Real Image (numpy array)
+
+        useTemplateMacthing : (bool) whether to use Template Matching or not
+
+    Returns:
+        flannMatch : True if Only FLANN matching is used
+
+        crop_border : (np.array) Bounding box of cropped image if associated.
+                      None if Not associated.
+
+    """
+
+    # parameters for FLANN Macthing
     mini_match_count = 10
     FLANN_INDEX_KDTREE = 1
     index_params = dict(algorithm=FLANN_INDEX_KDTREE, trees=5)
     search_params = dict(checks=10)
 
+    # creating object for SIFT descriptor
     sift = cv2.xfeatures2d.SIFT_create()
 
+    # detect keypoints and get descriptions on crop and originalimage
     kp1, des1 = sift.detectAndCompute(img1, None)
     kp2, des2 = sift.detectAndCompute(img2, None)
 
     orgBorder = None
     flannMatch = True
 
+    # SIFT fails on solid color images, hence template matching is used here
     if (des1 is None) or (des2 is None):
         flannMatch = False
         if useTemplateMacthing:
 
             if (img2.shape[0] > img1.shape[0]) and (img2[1].shape[1] > img1.shape[1]):
                 res = cv2.matchTemplate(img2, img1, cv2.TM_CCOEFF)
-                min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
+                _, _, min_loc, max_loc = cv2.minMaxLoc(res)
 
                 h, w, _ = img1.shape
 
@@ -42,12 +64,13 @@ def ModifiedFLANN(img1, img2, useTemplateMacthing=True):
 
         return flannMatch, orgBorder
 
+    # Use FLANN with default parameters
     flann = cv2.FlannBasedMatcher(index_params, search_params)
     matches = flann.knnMatch(des1, des2, k=2)
 
     good_matches = []
 
-
+    # Keep only features with good matches based on DMatch.distance
     for match1, match2 in matches:
         if match1.distance < (0.7 * match2.distance):
             good_matches.append((match1))
@@ -57,12 +80,14 @@ def ModifiedFLANN(img1, img2, useTemplateMacthing=True):
         cropImg = []
         orgImg = []
 
+        # Grab the coordinates of keypoints
         for m in good_matches:
             cropImg.append(kp1[m.queryIdx].pt)
             orgImg.append(kp2[m.trainIdx].pt)
 
         cropImg, orgImg = np.float32((cropImg, orgImg))
 
+        # use Homography to compute geometric transformation
         H, _ = cv2.findHomography(cropImg, orgImg, cv2.RANSAC, 3.0)
 
         if H is None:
@@ -72,17 +97,28 @@ def ModifiedFLANN(img1, img2, useTemplateMacthing=True):
 
         cropBorder = np.float32([[[0, 0], [0, h-1], [w-1, h-1], [w-1, 0]]])
 
+        # Detect corners based on current view
         orgBorder = cv2.perspectiveTransform(cropBorder, H)
 
     return flannMatch, orgBorder
 
 def findMinMax(border):
+    """
+        Detect min and max values of bounding box
+
+    Input:
+        border : (np.array) Bounding box of cropped image
+
+    Returns:
+        List of min and max values of x and y
+
+    """
 
     x, y = np.absolute(np.transpose(border)[0]), np.absolute(np.transpose(border)[1])
 
     x1, x2 = int(x.min()), int(x.max())
 
-    y1, y2 = int(y.min()), int(x.max())
+    y1, y2 = int(y.min()), int(y.max())
 
     return [x1, y1, x2, y2]
 

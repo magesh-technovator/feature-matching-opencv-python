@@ -1,0 +1,8 @@
+************* Module modifiedFLANNAlgoWithTemplateMacthing
+W: 47, 4: Redefining name 'flannMatch' from outer scope (line 152) (redefined-outer-name)
+W: 60,16: Redefining name 'pts' from outer scope (line 156) (redefined-outer-name)
+R: 14, 0: Too many local variables (31/15) (too-many-locals)
+
+------------------------------------------------------------------
+Your code has been rated at 9.65/10 (previous run: 3.60/10, +6.05)
+

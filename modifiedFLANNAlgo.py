@@ -80,7 +80,7 @@ def findMinMax(border):
 
     x1, x2 = int(x.min()), int(x.max())
 
-    y1, y2 = int(y.min()), int(x.max())
+    y1, y2 = int(y.min()), int(y.max())
 
     return [x1, y1, x2, y2]
 

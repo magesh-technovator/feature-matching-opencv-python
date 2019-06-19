@@ -6,11 +6,24 @@ Created on Tue Jun 18 11:03:42 2019
 """
 import os
 import json
-import numpy as np
 import configparser
+import numpy as np
 
 
 def evaluateModel(gt_result, model_result):
+    """
+        Evaluates the model based on ground truth values
+
+    Input:
+        gt_result : dict object containing ground truth result
+
+        model_result: dict object containing model generated output
+
+    Output:
+        Returns nothing, Prints the evaluation metrics in the console
+
+    """
+
     gt_images = list(gt_result.keys())
 
     tp = tn = fp = fn = 0
@@ -22,7 +35,7 @@ def evaluateModel(gt_result, model_result):
         gt_list = []
         model_list = []
 
-        if len(gt_association) > 0:
+        if gt_association:
             for i in range(len(gt_association)):
                 gt_list.append(gt_association[i][0])
 
@@ -48,10 +61,10 @@ def evaluateModel(gt_result, model_result):
                 if found not in gt_copy:
                     fp += 1
 
-        elif len(model_association) == 0:
+        elif not model_association:
             tn += 1
 
-        elif len(model_association) > 0:
+        else:
             fp += len(model_association)
 
     precision = tp / (tp + fp)
@@ -67,6 +80,7 @@ def evaluateModel(gt_result, model_result):
     confusion_matrix = np.array(([tp, fp], [fn, tn]))
 
     print("Confusion Matrix:", confusion_matrix)
+
 
 if __name__ == "__main__":
 
@@ -85,9 +99,9 @@ if __name__ == "__main__":
     modelResult = config.get(section[0], filepath[1])
 
     with open(modelResult, "r") as f:
-        model_result = json.load(f)
+        read_model_result = json.load(f)
 
     with open(gtResult, "r") as f:
-        gt_result = json.load(f)
+        read_gt_result = json.load(f)
 
-    evaluateModel(gt_result, model_result)
+    evaluateModel(read_gt_result, read_model_result)

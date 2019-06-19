@@ -11,11 +11,10 @@ import configparser
 import json
 import cv2
 from tqdm import tqdm
-
 from dataExtraction import (createFolders, getFiles, getUrls, downloadImages,
                             getSampleTestset)
-
 from modifiedFLANNAlgoWithTemplateMacthing import (ModifiedFLANN, findMinMax)
+
 
 if __name__ == "__main__":
 
@@ -95,23 +94,35 @@ if __name__ == "__main__":
             crop_img = cv2.imread(os.path.join(crops_folder,
                                                cropfile))
 
+            # Using FLANN Match with SIFT Descriptor to find Association
             flannMatch, crop_border = ModifiedFLANN(crop_img, img,
                                                     useTemplateMacthing)
 
             if flannMatch:
                 if crop_border is not None:
+                    # Detect min and max values of x and y from bounding box
                     pts = findMinMax(crop_border[0])
+
+                    # keep track of crop association for a particular image
                     imageTracker.append((cropfile.replace(".jpg", ""), pts))
+
+                    # Remove associated images from the list
+                    # helps us to record NA Crops
                     if cropfile in noAssociationCropImages:
                         noAssociationCropImages.remove(cropfile)
 
             else:
                 if crop_border is not None:
+                    # keep track of crop association for a particular image
                     imageTracker.append((cropfile.replace(".jpg", ""),
                                          crop_border))
+
+                    # Remove associated images from the list
+                    # helps us to record NA Crops
                     if cropfile in noAssociationCropImages:
                         noAssociationCropImages.remove(cropfile)
 
+        # Store all the CropImages associated to an image in a dictionary
         completeTracker[imagefile.replace(".jpg", "")] = imageTracker
 
 
@@ -120,10 +131,12 @@ if __name__ == "__main__":
     for crop in noAssociationCropImages:
         NA_Crops.append([crop.replace(".jpg", ""), []])
 
+    # Store all the Unassociated images to dictionary with key: "NA"
     completeTracker["NA"] = NA_Crops
 
     modelResult = os.path.join(base_dir, modelResult)
 
+    # Dump the Dictionary to a json file in the current working directory
     with open(modelResult, "w") as f:
         json.dump(completeTracker, f, indent=4, sort_keys=True)
 
