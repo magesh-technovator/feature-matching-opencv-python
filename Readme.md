@@ -1,4 +1,13 @@
-# Solutions to MadStreetDen interview problem
+# Finding Patches of Query image in set of training images using Feature Matching
+
+## Approach:
+Initially by visualizing the associations in sample test set and examining the cropped images, I have decided to go with Feature Matching(using keypoints) techinques instead of template matching. Following are the various methods I tried out with few samples that are manually picked from the test set:
+1. BruteForce Matching with ORB. # performed well but not very accurate compared to others
+2. BruteForce Matching(knn) with SIFT. # Very accurate
+3. FLANN based Matching with SIFT Descriptors. # Very accurate and Faster method.
+4. **FLANN based Matching with SIFT Descriptors and Template Matching** for Samples where SIFT fails to detect keypoints(*Model Currently Used for ImageCrop Association*). # Better in terms of Accuracy and Faster than BruteForce Methods.
+
+After Iterating over the sample testset with above methods, I found the last one to be more efficient.
 
 ## Codebase Structure and Exectution:
 1. **modelConfig.inf** facilitates **imagesCropAssociation.py**:
@@ -38,17 +47,6 @@
 10. **requirements.txt** It has list of python packages and their versions, used for this project. 
 	- **Makesure your python Installation comes os, json and configparser scripts.**
 	- Code is written in Python3 and the version I have used is 3.6.5
-	
-11. I regret that I am unable to create unit tests on python files, But I have explored corner cases and used If statements to avoid all types of errors.
-
-## Approach:
-Initially by visualizing the associations in sample test set and examining the cropped images, I have decided to go with Feature Matching(using keypoints) techinques instead of template matching. Following are the various methods I tried out with few samples that are manually picked from the test set:
-1. BruteForce Matching with ORB. # performed well but not very accurate compared to others
-2. BruteForce Matching(knn) with SIFT. # Very accurate
-3. FLANN based Matching with SIFT Descriptors. # Very accurate and Faster method.
-4. **FLANN based Matching with SIFT Descriptors and Template Matching** for Samples where SIFT fails to detect keypoints(*Model Currently Used for ImageCrop Association*). # Better in terms of Accuracy and Faster than BruteForce Methods.
-
-After Iterating over the sample testset with above methods, I found the last one to be more efficient.
 
 ## Algorithm:
 
