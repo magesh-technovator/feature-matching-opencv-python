@@ -1,4 +1,4 @@
-# Finding Patches of Query image in set of training images using Feature Matching
+# Finding Patches of Query image associated to a set of training images using Feature Matching
 
 ## Approach:
 Initially by visualizing the associations in sample test set and examining the cropped images, I have decided to go with Feature Matching(using keypoints) techinques instead of template matching. Following are the various methods I tried out with few samples that are manually picked from the test set:
