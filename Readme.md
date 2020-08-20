@@ -1,5 +1,8 @@
 # Finding Patches of Query image associated to a set of training images using Feature Matching
 
+## Problem definition:
+Given a set of training images(full size image) and a set of query images(patches cropped from train images and added some noises/disortions). We need to associate each patch(query image) with their respective full image(train image). This problem is mainly about extracting keypoints features from both training and query image and then to use some algorithms for faster and accurate matching.
+
 ## Approach:
 Initially by visualizing the associations in sample test set and examining the cropped images, I have decided to go with Feature Matching(using keypoints) techinques instead of template matching. Following are the various methods I tried out with few samples that are manually picked from the test set:
 1. BruteForce Matching with ORB. # performed well but not very accurate compared to others
