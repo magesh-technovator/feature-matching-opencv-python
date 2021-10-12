@@ -4,7 +4,7 @@ isort==4.3.20
 lazy-object-proxy==1.4.1
 mccabe==0.6.1
 numpy==1.16.3
-opencv-contrib-python==3.4.2.16
+opencv-contrib-python==3.4.7.28
 opencv-python==3.4.2.16
 pylint==2.3.1
 six==1.12.0
